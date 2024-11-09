@@ -4,7 +4,10 @@ import colorData from "../data/colorData/benjamin-moore-colors.json";
 import ColorCard from "./ColorCard";
 
 const Search: React.FC = () => {
-  const [hexCode, setHexCode] = useState("");
+  const [hexCode, setHexCode] = useState(
+    colorData.colors[Math.floor(Math.random() * colorData.colors.length - 1)]
+      .hex,
+  );
   const [closestColors, setClosestColors] = useState<
     { distance: number; hex: string; label: string; name: string }[]
   >([]);
@@ -50,7 +53,7 @@ const Search: React.FC = () => {
   const isValidHex = (hex: string) => /^#[0-9A-F]{6}$/i.test(hex);
 
   return (
-    <div className="p-4">
+    <div className="flex w-full flex-col items-center p-4">
       <form
         onSubmit={handleSubmit}
         className="mb-8 w-fit"
@@ -74,7 +77,7 @@ const Search: React.FC = () => {
           Search
         </button>
       </form>
-      <div className="flex flex-wrap justify-center gap-4">
+      <div className="grid grid-cols-2 flex-wrap justify-center gap-4 md:flex">
         {closestColors.map((color, index) => (
           <ColorCard
             key={index}
