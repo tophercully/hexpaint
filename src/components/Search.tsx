@@ -1,4 +1,3 @@
-// Search.tsx
 import React, { useState } from "react";
 import colorData from "../data/colorData/benjamin-moore-colors.json";
 import ColorCard from "./ColorCard";
@@ -16,6 +15,7 @@ const Search: React.FC = () => {
     event.preventDefault();
     const closestColors = findClosestColors(hexCode);
     setClosestColors(closestColors);
+    console.log("Closest colors updated:", closestColors);
   };
 
   const hexToRgb = (hex: string) => {
@@ -72,42 +72,43 @@ const Search: React.FC = () => {
         />
         <button
           type="submit"
-          className="rounded bg-base-600 p-2 text-white"
+          className="rounded bg-base-600 p-2 text-white hover:bg-base-800"
         >
           Search
         </button>
       </form>
-
-      {closestColors.length > 0 && (
-        <>
-          <div className="w-fit">
-            <h3 className="text-medium w-full py-2 text-xl">
-              {`"${closestColors[0]?.name}" is the closest Benjamin Moore paint color to ${hexCode.toUpperCase()}.`}
-            </h3>
-            <ColorCard
-              key={0}
-              name={closestColors[0]?.name}
-              hex={closestColors[0]?.hex}
-              label={closestColors[0]?.label}
-            />
+      <div
+        className={`flex w-full flex-col items-center gap-16 overflow-hidden pb-4 duration-1000 ease-in ${
+          closestColors.length > 0 ? "max-h-[5000px]" : "max-h-0"
+        }`}
+      >
+        <div className="w-fit">
+          <h3 className="text-medium w-full py-2 text-xl">
+            {`"${closestColors[0]?.name}" is the closest Benjamin Moore paint color to ${hexCode.toUpperCase()}.`}
+          </h3>
+          <ColorCard
+            key={0}
+            name={closestColors[0]?.name}
+            hex={closestColors[0]?.hex}
+            label={closestColors[0]?.label}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <h3 className="text-medium w-full py-2 text-xl">
+            10 closest Benjamin Moore paint colors to {hexCode.toUpperCase()}.
+          </h3>
+          <div className="grid w-full grid-cols-2 justify-center gap-4 sm:grid-cols-3 md:grid-cols-4 md:gap-8 lg:grid-cols-5">
+            {closestColors.map((color, index) => (
+              <ColorCard
+                key={index}
+                name={color.name}
+                hex={color.hex}
+                label={color.label}
+              />
+            ))}
           </div>
-          <div className="flex flex-col gap-2">
-            <h3 className="text-medium w-full py-2 text-xl">
-              10 closest Benjamin Moore paint colors to {hexCode.toUpperCase()}.
-            </h3>
-            <div className="grid w-full grid-cols-2 justify-center gap-4 sm:grid-cols-3 md:grid-cols-4 md:gap-8 lg:grid-cols-5">
-              {closestColors.map((color, index) => (
-                <ColorCard
-                  key={index}
-                  name={color.name}
-                  hex={color.hex}
-                  label={color.label}
-                />
-              ))}
-            </div>
-          </div>
-        </>
-      )}
+        </div>
+      </div>
     </div>
   );
 };
