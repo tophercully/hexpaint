@@ -16,11 +16,18 @@ const ColorCard: React.FC<ColorCardProps> = ({ name, hex, label }) => {
     showNotif("Copied to clipboard", "info", 2000, false);
   };
 
+  const openColorLink = () => {
+    const formattedName = name.toLowerCase().replace(/\s+/g, "-");
+    const url = `https://www.benjaminmoore.com/en-us/paint-colors/color/${label}/${formattedName}`;
+    window.open(url, "_blank");
+  };
+
   return (
-    <div className="flex w-full flex-col gap-2 overflow-hidden rounded-md border-base-300 bg-base-50 shadow-lg shadow-md md:w-48">
+    <div className="flex w-full flex-col gap-2 overflow-hidden rounded-md border-base-300 bg-base-50 shadow-lg duration-200 hover:scale-[101%]">
       <div
-        className="aspect-square w-full"
+        className="aspect-video w-full cursor-pointer"
         style={{ backgroundColor: hex }}
+        onClick={openColorLink}
       />
       <div className="flex flex-col gap-2 p-4">
         <span className="flex gap-2">
@@ -31,7 +38,7 @@ const ColorCard: React.FC<ColorCardProps> = ({ name, hex, label }) => {
           />
         </span>
         <span className="flex gap-2">
-          <p className="mb-1 text-base-600">{hex}</p>
+          <p className="mb-1 text-base-600">{hex ? hex.toUpperCase() : hex}</p>
           <Copy
             onClick={() => copyItem(hex)}
             className="h-full cursor-pointer p-1 text-base-150 hover:text-base-400"

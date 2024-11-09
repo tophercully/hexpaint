@@ -47,13 +47,13 @@ const Search: React.FC = () => {
       };
     });
     distances.sort((a, b) => a.distance - b.distance);
-    return distances.slice(0, 5);
+    return distances.slice(0, 10);
   };
 
   const isValidHex = (hex: string) => /^#[0-9A-F]{6}$/i.test(hex);
 
   return (
-    <div className="flex w-full flex-col items-center p-4">
+    <div className="flex w-full flex-col items-center gap-8 p-4">
       <form
         onSubmit={handleSubmit}
         className="mb-8 w-fit"
@@ -77,16 +77,37 @@ const Search: React.FC = () => {
           Search
         </button>
       </form>
-      <div className="grid grid-cols-2 flex-wrap justify-center gap-4 md:flex">
-        {closestColors.map((color, index) => (
-          <ColorCard
-            key={index}
-            name={color.name}
-            hex={color.hex}
-            label={color.label}
-          />
-        ))}
-      </div>
+
+      {closestColors.length > 0 && (
+        <>
+          <div className="w-fit">
+            <h3 className="text-medium w-full py-2 text-xl">
+              {`"${closestColors[0]?.name}" is the closest Benjamin Moore paint color to ${hexCode.toUpperCase()}.`}
+            </h3>
+            <ColorCard
+              key={0}
+              name={closestColors[0]?.name}
+              hex={closestColors[0]?.hex}
+              label={closestColors[0]?.label}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <h3 className="text-medium w-full py-2 text-xl">
+              10 closest Benjamin Moore paint colors to {hexCode.toUpperCase()}.
+            </h3>
+            <div className="grid w-full grid-cols-2 justify-center gap-4 sm:grid-cols-3 md:grid-cols-4 md:gap-8 lg:grid-cols-5">
+              {closestColors.map((color, index) => (
+                <ColorCard
+                  key={index}
+                  name={color.name}
+                  hex={color.hex}
+                  label={color.label}
+                />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
