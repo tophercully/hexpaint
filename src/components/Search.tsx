@@ -1,21 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import colorData from "../data/colorData/benjamin-moore-colors.json";
 import ColorCard from "./ColorCard";
+import { signal, Signal } from "@preact/signals-react";
+
+const hexCode = signal(
+  colorData.colors[Math.floor(Math.random() * colorData.colors.length - 1)].hex,
+);
+const closestColors = signal([]) as Signal<
+  { distance: number; hex: string; label: string; name: string }[]
+>;
 
 const Search: React.FC = () => {
-  const [hexCode, setHexCode] = useState(
-    colorData.colors[Math.floor(Math.random() * colorData.colors.length - 1)]
-      .hex,
-  );
-  const [closestColors, setClosestColors] = useState<
-    { distance: number; hex: string; label: string; name: string }[]
-  >([]);
+  console.log("Rendering Search component");
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    const closestColors = findClosestColors(hexCode);
-    setClosestColors(closestColors);
-    console.log("Closest colors updated:", closestColors);
+    closestColors.value = findClosestColors(hexCode.value);
+    console.log("Closest colors updated:", closestColors.value);
   };
 
   const hexToRgb = (hex: string) => {
@@ -61,12 +62,15 @@ const Search: React.FC = () => {
         <div
           id="color-preview"
           className="mb-4 aspect-square w-full rounded-md p-2 text-center"
-          style={{ backgroundColor: isValidHex(hexCode) ? hexCode : "#000000" }}
+          style={{
+            backgroundColor:
+              isValidHex(hexCode.value) ? hexCode.value : "#000000",
+          }}
         />
         <input
           type="text"
-          value={hexCode}
-          onChange={(e) => setHexCode(e.target.value)}
+          value={hexCode.value}
+          onChange={(e) => (hexCode.value = e.target.value)}
           placeholder="Enter hex code (e.g. #FF0000)"
           className="mr-2 max-w-[10ch] rounded border border-base-300 p-2"
         />
@@ -79,26 +83,27 @@ const Search: React.FC = () => {
       </form>
       <div
         className={`flex w-full flex-col items-center gap-16 overflow-hidden pb-4 duration-1000 ease-in ${
-          closestColors.length > 0 ? "max-h-[5000px]" : "max-h-0"
+          closestColors.value.length > 0 ? "max-h-[5000px]" : "max-h-0 p-0 pb-0"
         }`}
       >
         <div className="w-fit">
           <h3 className="text-medium w-full py-2 text-xl">
-            {`"${closestColors[0]?.name}" is the closest Benjamin Moore paint color to ${hexCode.toUpperCase()}.`}
+            {`"${closestColors.value[0]?.name}" is the closest Benjamin Moore paint color to ${hexCode.value.toUpperCase()}.`}
           </h3>
           <ColorCard
             key={0}
-            name={closestColors[0]?.name}
-            hex={closestColors[0]?.hex}
-            label={closestColors[0]?.label}
+            name={closestColors.value[0]?.name}
+            hex={closestColors.value[0]?.hex}
+            label={closestColors.value[0]?.label}
           />
         </div>
         <div className="flex flex-col gap-2">
           <h3 className="text-medium w-full py-2 text-xl">
-            10 closest Benjamin Moore paint colors to {hexCode.toUpperCase()}.
+            10 closest Benjamin Moore paint colors to{" "}
+            {hexCode.value.toUpperCase()}.
           </h3>
           <div className="grid w-full grid-cols-2 justify-center gap-4 sm:grid-cols-3 md:grid-cols-4 md:gap-8 lg:grid-cols-5">
-            {closestColors.map((color, index) => (
+            {closestColors.value.map((color, index) => (
               <ColorCard
                 key={index}
                 name={color.name}
